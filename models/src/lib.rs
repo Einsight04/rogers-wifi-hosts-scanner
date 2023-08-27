@@ -1,16 +1,18 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct Host {
     pub host_name: String,
-    mac_addr: String,
-    ip: String,
+    pub mac_addr: String,
+    pub ip: String,
     address_source: AddressSource,
     connect_type: ConnectType,
     comnum: u32,
     app_enable: BooleanFlag,
-    action: String,
+    pub action: String,
+    #[serde(default)] // <-- Add this line
+    pub wifi_enabled: bool,
     is_extender: BooleanFlag,
 }
 

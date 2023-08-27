@@ -102,11 +102,15 @@ async fn fetch_hosts() -> Result<HostResponse, String> {
     let username = "cusadmin";
     let password = "9616421240!";
 
-    let payload = construct_payload(&username, &password);
+    let payload = construct_payload(username, password);
 
     let client = reqwest::Client::new();
     let cookie = login_and_retrieve_cookie(&client, &payload).await.map_err(|e| e.to_string())?;
-    let hosts_data = fetch_hosts_data(&client, &cookie).await.map_err(|e| e.to_string())?;
+    let mut hosts_data = fetch_hosts_data(&client, &cookie).await.map_err(|e| e.to_string())?;
+
+    for host in &mut hosts_data.hosts_list {
+        host.wifi_enabled = host.action == "Resume";
+    }
 
     println!("Hosts data: ");
     println!("{:?}", hosts_data);
@@ -114,16 +118,9 @@ async fn fetch_hosts() -> Result<HostResponse, String> {
     Ok(hosts_data)
 }
 
-
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
 fn main() {
     tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![greet, fetch_hosts]) // <-- Notice the addition of fetch_hosts here
+        .invoke_handler(tauri::generate_handler![fetch_hosts])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
