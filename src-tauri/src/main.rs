@@ -97,10 +97,8 @@ async fn fetch_hosts_data(
 #[tauri::command]
 async fn fetch_hosts() -> Result<HostResponse, String> {
     dotenv().ok();
-    // let username = env::var("ROUTER_USERNAME").unwrap_or_default();
-    // let password = env::var("ROUTER_PASSWORD").unwrap_or_default();
-    let username = "cusadmin";
-    let password = "9616421240!";
+    let username = env::var("ROUTER_USERNAME").unwrap_or_default();
+    let password = env::var("ROUTER_PASSWORD").unwrap_or_default();
 
     let payload = construct_payload(username, password);
 
